@@ -1,0 +1,101 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.response-config {
+    margin-bottom: 30px;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.request-logs {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.log-entry {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+/* Custom scrollbar for code blocks */
+pre {
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E0 #EDF2F7;
+}
+
+pre::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+    background: #EDF2F7;
+}
+
+pre::-webkit-scrollbar-thumb {
+    background-color: #CBD5E0;
+    border-radius: 4px;
+}
+
+/* Smooth transitions */
+.transition-opacity {
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Dark mode styles for Prism syntax highlighting */
+.dark pre[class*="language-"],
+.dark code[class*="language-"] {
+    color: #f8f8f2;
+    background: none;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+}
+
+.dark .token.property,
+.dark .token.tag,
+.dark .token.constant,
+.dark .token.symbol,
+.dark .token.deleted {
+    color: #f92672;
+}
+
+.dark .token.boolean,
+.dark .token.number {
+    color: #ae81ff;
+}
+
+.dark .token.string,
+.dark .token.char,
+.dark .token.attr-value,
+.dark .token.builtin,
+.dark .token.inserted {
+    color: #a6e22e;
+}
+
+.dark .token.punctuation {
+    color: #f8f8f2;
+}
+
+/* Light mode adjustments */
+pre[class*="language-"],
+code[class*="language-"] {
+    text-shadow: none;
+}
