@@ -23,7 +23,6 @@ var rootCmd = &cobra.Command{
 specific responses based on conditions. Similar to requestbin or postbin.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mockServer := server.NewMockServer(response)
-
 		// Start admin server in a goroutine
 		go func() {
 			if err := mockServer.StartAdmin(adminPort); err != nil {
@@ -38,7 +37,7 @@ specific responses based on conditions. Similar to requestbin or postbin.`,
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
@@ -46,5 +45,6 @@ func Execute() {
 func init() {
 	rootCmd.Flags().IntVarP(&port, "port", "p", 8080, "Port to run the server on")
 	rootCmd.Flags().IntVarP(&adminPort, "admin-port", "a", 8081, "Port to run the admin interface on")
-	rootCmd.Flags().StringVarP(&response, "response", "r", "{\"status\":\"ok\"}", "Default response to return")
+	rootCmd.Flags().StringVarP(&response, "response", "r", "{\"status\": \"ok\"}", "Default response to return")
+	rootCmd.Flags().BoolP("version", "v", false, "Print current package version")
 }
