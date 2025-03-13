@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mock API Admin</title>
+    <title>Mock API</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -20,7 +20,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Mock API Admin</h1>
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Mock API Configuration</h1>
                     </div>
                     <div class="flex items-center">
                         <button
@@ -43,11 +43,23 @@
 
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <!-- Response Configuration -->
-            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg mb-6">
-                <div class="px-4 py-5 sm:p-6">
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Configure Responses</h2>
-                    <div class="space-y-4">
+            <div class="container mx-auto px-4 py-8">
+                <!-- Header with Add New Response button -->
+                <div class="flex justify-end mb-8">
+                    <button
+                        id="addNewResponseToggle"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:text-white dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        Add New Response
+                        <svg class="w-5 h-5 ml-1 transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Add New Response form (hidden by default) -->
+                <div id="addNewResponseForm" class="hidden mb-8 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <div id="addResponseForm" class="space-y-4">
                         <div class="grid grid-cols-6 gap-4">
                             <div class="col-span-3">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Path</label>
@@ -55,8 +67,7 @@
                                     type="text"
                                     id="pathInput"
                                     class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 font-mono h-11 bg-gray-50 dark:bg-gray-700 dark:text-white"
-                                    placeholder="/ for default response"
-                                    value="/"
+                                    placeholder="/api/example"
                                 />
                             </div>
                             <div class="col-span-2">
@@ -78,34 +89,134 @@
                                 id="responseInput"
                                 rows="5"
                                 class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 font-mono bg-gray-50 dark:bg-gray-700 dark:text-white"
-                                placeholder='Enter JSON response...'
-                            >{"status": "ok"}</textarea>
+                                placeholder='{"message": "example response"}'
+                            ></textarea>
                         </div>
-                        <div class="flex justify-between">
+                        <div>
                             <button
-                                onclick="updateResponse()"
+                                type="button"
+                                id="advancedConfigToggle"
+                                class="flex w-full justify-between items-center border-t border-gray-200 dark:border-gray-700 mt-6 pt-4 text-left"
+                            >
+                                <h3 class="text-sm font-medium text-gray-900 dark:text-white">Advanced Configuration</h3>
+                                <svg id="advancedConfigIcon" class="h-5 w-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div id="advancedConfigContent" class="hidden space-y-4 mt-4">
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input
+                                                id="hangUpInput"
+                                                type="radio"
+                                                name="advancedOption"
+                                                value="hangup"
+                                                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700"
+                                            >
+                                        </div>
+                                        <div class="ml-3">
+                                            <label for="hangUpInput" class="text-sm text-gray-700 dark:text-gray-300">
+                                                Request hung up
+                                            </label>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Hold the request indefinitely without responding</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input
+                                                id="timeoutRadio"
+                                                type="radio"
+                                                name="advancedOption"
+                                                value="timeout"
+                                                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700"
+                                            >
+                                            <div class="ml-3 flex items-center">
+                                                <input
+                                                    id="timeoutInput"
+                                                    type="number"
+                                                    step="0.1"
+                                                    min="0"
+                                                    placeholder="10"
+                                                    value="10"
+                                                    class="focus:ring-indigo-500 w-20 text-indigo-600 border-gray-300 rounded dark:border-gray-600 dark:bg-gray-700 dark:text-white text-center mx-2 p-1"
+                                                    oninput="document.getElementById('timeoutRadio').checked = true"
+                                                >
+                                                <label for="timeoutInput" class="text-sm text-gray-700 dark:text-gray-300">
+                                                    Request timeout (seconds)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input
+                                                id="delayRadio"
+                                                type="radio"
+                                                name="advancedOption"
+                                                value="delay"
+                                                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700"
+                                            >
+                                            <div class="ml-3 flex items-center">
+                                                <input
+                                                    id="delayInput"
+                                                    type="number"
+                                                    step="0.1"
+                                                    min="0"
+                                                    placeholder="5"
+                                                    value="5"
+                                                    class="focus:ring-indigo-500 w-20 text-indigo-600 border-gray-300 rounded dark:border-gray-600 dark:bg-gray-700 dark:text-white text-center mx-2 p-1"
+                                                    oninput="document.getElementById('delayRadio').checked = true"
+                                                >
+                                                <label for="delayInput" class="text-sm text-gray-700 dark:text-gray-300">
+                                                    Respond after (seconds)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input
+                                                id="rejectRequestInput"
+                                                type="radio"
+                                                name="advancedOption"
+                                                value="reject"
+                                                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700"
+                                            >
+                                        </div>
+                                        <div class="ml-3">
+                                            <label for="rejectRequestInput" class="text-sm text-gray-700 dark:text-gray-300">
+                                                Do not accept request
+                                            </label>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Close the connection immediately without response</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button
+                                onclick="addNewResponse()"
                                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
-                                Update Response
+                                Save
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Add a new section for current path responses -->
-            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg mb-6">
-                <div class="px-4 py-5 sm:p-6">
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Current Path Responses</h2>
-                    <div id="pathResponses" class="space-y-4"></div>
+                <!-- Current Path Responses section -->
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">Responses</h1>
+                <div id="pathResponses" class="space-y-4">
+                    <!-- Path responses will be inserted here -->
                 </div>
-            </div>
 
-            <!-- Request Logs -->
-            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Request Logs</h2>
-                    <div id="logs" class="space-y-4"></div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mt-8 mb-4">Request Logs</h2>
+                <div id="logs" class="space-y-4">
+                    <!-- Logs will be inserted here -->
                 </div>
             </div>
         </main>
